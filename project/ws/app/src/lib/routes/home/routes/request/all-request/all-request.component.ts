@@ -45,14 +45,6 @@ export class AllRequestComponent implements OnInit {
   statusKey = statusValue
   invalidRes: any;
   selectedList:any[]=[]
-  filterOptions = [
-    { label: 'All Requests', value: 'allRequests' },
-    { label: 'Unassigned', value: 'Unassigned' },
-    { label: 'Assigned', value: 'Assigned' },
-    { label: 'In-progress', value: 'InProgress' },
-    { label: 'Fulfilled', value: 'Fulfill' },
-    { label: 'Invalid', value: 'Fulfill' }
-  ];
   isShowBtn:boolean = false;
   filterForm!:FormGroup;
   isFilterOpen:boolean = false
@@ -74,9 +66,7 @@ export class AllRequestComponent implements OnInit {
     this.getRequestList()
      this.getStatusCount()     
   }
-  openFilter(){
-    this.isFilterOpen = true
-  }
+
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html)
   }
