@@ -6,6 +6,7 @@ import { RequestServiceService } from '../request-service.service'
 import { AssignListPopupComponent } from '../assign-list-popup/assign-list-popup.component'
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component'
 import { SingleAssignPopupComponent } from '../single-assign-popup/single-assign-popup.component'
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms'
 export enum statusValue {
   Assigned= 'Assigned',
   Unassigned = 'Unassigned',
@@ -39,37 +40,103 @@ export class AllRequestComponent implements OnInit {
   'requestType', 'requestStatus', 'assignee', 'requestedOn', 'interests', 'action']
   dialogRef: any
   queryParams: any
-  statusCards: any[] = []
+  statusCards: any[] = [];
+  filterList:any[]=[]
   statusKey = statusValue
-  invalidRes: any
+  invalidRes: any;
+  selectedList:any[]=[]
+  filterOptions = [
+    { label: 'All Requests', value: 'allRequests' },
+    { label: 'Unassigned', value: 'Unassigned' },
+    { label: 'Assigned', value: 'Assigned' },
+    { label: 'In-progress', value: 'InProgress' },
+    { label: 'Fulfilled', value: 'Fulfill' },
+    { label: 'Invalid', value: 'Fulfill' }
+  ];
+  isShowBtn:boolean = false;
+  filterForm!:FormGroup;
+  isFilterOpen:boolean = false
+
+  dropdownOpened:boolean = false;
 
   constructor(
+    private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer,
     private router: Router,
     private requestService: RequestServiceService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog) {
+      this.filterForm  = this.formBuilder.group({
+        statusData: new FormControl(false),
+      })
+    }
   ngOnInit() {
     this.getRequestList()
-     this.getStatusCount()
+     this.getStatusCount()     
   }
-
+  openFilter(){
+    this.isFilterOpen = true
+  }
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html)
   }
 
+  onApplyfilter(){
+   this.pageNo =0;
+   this.pageSize = 10;
+   this.getRequestList()
+  }
+
+  onCheckboxChange(event:any, value: string){
+  if(event.checked){
+  this.selectedList.push(value)
+  this.isShowBtn = true
+  }
+  else {
+    const index = this.selectedList.indexOf(value);
+    if (index > -1) {
+      this.selectedList.splice(index, 1);
+    }
+    if(this.selectedList.length === 0){
+      this.getRequestList()
+      this.isShowBtn = false
+    }
+  }
+  }
+
+  clearSelection(){
+    if(this.filterForm.value.statusData){
+      this.filterForm.reset()
+      this.selectedList =[]
+  
+      this.getRequestList()
+    }
+   
+  }
+
+  searchValuetext(searchText:string){
+  if(searchText.length > 2){
+   this.getRequestList(searchText)
+  }
+  else if(searchText.length === 0) {
+    this.getRequestList()
+  }
+  
+  }
+
   getStatusCount() {
     const request = {
-      filterCriteriaMap: {
-      },
+      // filterCriteriaMap: {},
       requestedFields: ['status'],
       orderBy: 'createdOn',
       orderDirection: 'ASC',
       facets: ['status'],
+      
     }
     this.requestService.getRequestList(request).subscribe((res: any) => {
       if (res.facets && res.facets.status) {
         this.statusCards = res.facets.status
+        this.filterList = res.facets.status
         const toolTipText: any = {
           Assigned: 'Total number of requests assigned',
           Invalid: 'Total number of Invalid requests',
@@ -95,15 +162,22 @@ export class AllRequestComponent implements OnInit {
 
   }
 
-  getRequestList() {
+  getRequestList(searchKey?:string) {
     const request = {
-      filterCriteriaMap: {},
       requestedFields: [],
+      filterCriteriaMap:{},
       facets: [],
       pageNumber: this.pageNo,
       pageSize: this.pageSize,
       orderBy: 'createdOn',
       orderDirection: 'ASC',
+      searchString:searchKey
+    }
+    if( this.selectedList && this.selectedList.length){
+      request.filterCriteriaMap = {status:this.selectedList}
+    }
+    else {
+      request.filterCriteriaMap={}
     }
     this.requestService.getRequestList(request).subscribe((res: any) => {
       if (res.data) {

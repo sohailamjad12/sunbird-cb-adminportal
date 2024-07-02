@@ -30,6 +30,7 @@ import {
   MatButtonToggleModule,
   MatRadioModule,
   MatTooltipModule,
+  MatToolbarModule,
 } from '@angular/material'
 import { MatCardModule } from '@angular/material/card'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
@@ -186,6 +187,7 @@ import { SingleAssignPopupComponent } from './routes/request/single-assign-popup
     ScrollspyLeftMenuModule,
     MatRadioModule,
     MatTooltipModule,
+    MatToolbarModule,
     // TO-DO need to enable for image crop
     // ImageCropModule,
     NgMultiSelectDropDownModule.forRoot(),

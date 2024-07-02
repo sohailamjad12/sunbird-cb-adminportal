@@ -1,3 +1,41 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="over" position="end" class="sidenav-UI" disableClose>
+    <div class="toolbar-heading">
+      <div class="toolbar-text">
+       {{'Filters'}}
+      </div>
+      <div class="toolbar-close">
+        <mat-icon class="cursor-pointer" (click)="sidenav.close()">clear</mat-icon>
+      </div>
+
+    </div>
+    <div class="RequestStatus" (click)="dropdownOpened = !dropdownOpened">
+      <div class="requestText">
+        {{'Request Status'}}
+
+      </div>
+      <div class="icon_cls">
+       <mat-icon *ngIf="!dropdownOpened">keyboard_arrow_right</mat-icon>
+       <mat-icon *ngIf="dropdownOpened">keyboard_arrow_down</mat-icon>
+      </div>
+    </div>
+    <form  [formGroup]="filterForm" (ngSubmit)="onApplyfilter();sidenav.close()">    
+    <mat-list [hidden]="dropdownOpened">
+      <mat-list-item *ngFor="let filter of filterList">
+        <mat-checkbox [checked]="filter.value" (change)="onCheckboxChange($event, filter.value)" formControlName="statusData" class="label-text">{{ filter.value }}</mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+ 
+
+    <div class="action-btns flex flex-start margin-top-l">
+      <button mat-button class="close-btn margin-right-xs " (click)="clearSelection()" type="button" >Clear</button>
+      <button mat-button class="submit-btn " type="submit" [ngClass]="{'disableBtn': !this.filterForm.value.statusData && !this.selectedList.length}" >
+        Apply Filter</button>
+    </div>
+  </form>
+    <!-- <button mat-button (click)="sidenav.close()">Close</button> -->
+  </mat-sidenav>
+  <mat-sidenav-content  class="overlay">
     <div class="nav-container" autosize name="auth-tool-exp">
         <div class="nav-container">
          
@@ -17,6 +55,24 @@
 
                </div>
             </div>
+            <div class="filter-section">
+              <div class="search-filter-section">
+                <div class="sinput">
+                  <span class="material-icons"> search </span>
+                  <input type="Standard" id="search" label="" #searchInput (input)="searchValuetext($event.target.value)"
+                       placeholder="Search">
+              </div>
+              </div>
+              <div class="check-filter-section cursor-pointer">
+               <div class="filter-text " (click)="sidenav.toggle()">{{'Apply Filter'}}</div>
+               <div class="icon-text">
+                <mat-icon>filter_list</mat-icon>
+               </div>
+             
+              </div>
+
+            </div>
+
           <div class="nav-container">
             <div class="sidenav-content">
               <div class="table-class">
@@ -141,3 +197,5 @@
         </div>
         </div>
     </div>
+    </mat-sidenav-content>
+    </mat-sidenav-container>
