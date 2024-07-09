@@ -158,35 +158,34 @@ export class RequestCopyDetailsComponent implements OnInit {
     this.requestForm.controls.competencies_v5.setValue(value)
 
     this.selectRequestType(this.requestObjData.requestType)
-    if (this.filteredRequestType) {
-      if (this.requestObjData.preferredProvider && this.requestObjData.preferredProvider.length) {
-        const prefferedData = this.filteredRequestType.filter(option =>
-          this.requestObjData.preferredProvider.some((res: any) =>
-            res.providerId === option.id
-          ))
-        if (prefferedData && prefferedData.length) {
-          this.requestForm.controls['providers'].setValue(prefferedData)
-        }
-      }
+   if (this.filteredRequestType) {
+    if (this.requestObjData.preferredProvider && this.requestObjData.preferredProvider.length) {
+    const prefferedData = this.filteredRequestType.filter(option =>
+      this.requestObjData.preferredProvider.some((res: any) =>
+         res.providerId === option.id
+    ))
+    if (prefferedData && prefferedData.length) {
+      this.requestForm.controls['providers'].setValue(prefferedData)
     }
+  }
+   }
 
-    if (this.filteredAssigneeType) {
-      if (this.requestObjData.assignedProvider) {
-        const assignData = this.filteredAssigneeType.find(option =>
-          this.requestObjData.assignedProvider.providerId === option.id
-        )
-        if (assignData) {
-          this.requestForm.controls['assignee'].setValue(assignData)
-        }
-      }
-
+   if (this.filteredAssigneeType) {
+    if (this.requestObjData.assignedProvider) {
+      const assignData = this.filteredAssigneeType.find(option =>
+        this.requestObjData.assignedProvider.providerId === option.id
+       )
+       if (assignData) {
+         this.requestForm.controls['assignee'].setValue(assignData)
+       }
     }
+   }
+
   }
 
   navigateBack() {
     this.router.navigateByUrl('/app/home/all-request')
   }
-
 
   valuechangeFuctions() {
     if (this.requestForm.controls['providerText']) {
